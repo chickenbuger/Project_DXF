@@ -26,6 +26,7 @@ SystemClass::SystemClass(const SystemClass& other)
 SystemClass::~SystemClass()
 {
 }
+
 // 다음 Initialize 함수는 어플리케이션의 모든 설정을 수행한다.
 // 먼저 어플리케이션에서 사용할 창을 생성하는 InitializeWindows를 호출한다.
 // 또한 Input 과 Graphics 객체를 초기화한다.
@@ -33,7 +34,6 @@ bool SystemClass::Initialize()
 {
 	int screenWidth, screenHeight;
 	bool result;
-
 
 	// Initialize the width and height of the screen to zero before sending the variables into the function.
 	screenWidth = 0;
@@ -111,8 +111,7 @@ void SystemClass::Run()
 	MSG msg;
 	bool done, result;
 
-
-	// Initialize the message structure.
+	// 구조체 초기화
 	ZeroMemory(&msg, sizeof(MSG));
 
 	// Loop until there is a quit message from the window or the user.
@@ -140,11 +139,11 @@ void SystemClass::Run()
 				done = true;
 			}
 		}
-
 	}
 
 	return;
 }
+
 // 다음의 Frame 함수는 어플리케이션의 모든 프로세스가 완료되는 곳이다.
 // 체크하는건 꽤 단순한데, 사용자가 esc를 눌러 종료하길 원하는지 확인하면 된다.
 // 만약 종료를 원하지 않을 땐 Graphics 객체를 호출해 해당 프레임을 처리하여 렌더링하도록 한다.
@@ -152,7 +151,6 @@ void SystemClass::Run()
 bool SystemClass::Frame()
 {
 	bool result;
-
 
 	// Check if the user pressed escape and wants to exit the application.
 	if (m_Input->IsKeyDown(VK_ESCAPE))
@@ -169,6 +167,7 @@ bool SystemClass::Frame()
 
 	return true;
 }
+
 // MessageHandler 함수는 창의 시스템 메세지가 바로 전달되는 곳이다.
 // 이렇게 하면 우리가 관심있는 특정한 정보들에 대해 관찰할 수 있다.
 // 현재 우리는 키가 눌렸는지 떼어졌는지를 읽어서 Input 객체에 전달할 것이다.
@@ -178,28 +177,29 @@ LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam
 	switch (umsg)
 	{
 		// Check if a key has been pressed on the keyboard.
-	case WM_KEYDOWN:
-	{
-		// If a key is pressed send it to the input object so it can record that state.
-		m_Input->KeyDown((unsigned int)wparam);
-		return 0;
-	}
+		case WM_KEYDOWN:
+		{
+			// If a key is pressed send it to the input object so it can record that state.
+			m_Input->KeyDown((unsigned int)wparam);
+			return 0;
+		}
 
-	// Check if a key has been released on the keyboard.
-	case WM_KEYUP:
-	{
-		// If a key is released then send it to the input object so it can unset the state for that key.
-		m_Input->KeyUp((unsigned int)wparam);
-		return 0;
-	}
+		// Check if a key has been released on the keyboard.
+		case WM_KEYUP:
+		{
+			// If a key is released then send it to the input object so it can unset the state for that key.
+			m_Input->KeyUp((unsigned int)wparam);
+			return 0;
+		}
 
-	// Any other messages send to the default message handler as our application won't make use of them.
-	default:
-	{
-		return DefWindowProc(hwnd, umsg, wparam, lparam);
+		// Any other messages send to the default message handler as our application won't make use of them.
+		default:
+		{
+			return DefWindowProc(hwnd, umsg, wparam, lparam);
 	}
 	}
 }
+
 // InitializeWindows 함수는 우리가 렌더링할 창을 만드는 코드를 넣는 곳이다.
 // screenWidth와 screenHeight을 반환하여 모든 애플리케이션 전반에 사용할 수 있도록 한다.
 // 기본 설정으로 창을 생성하여 보더가 없는 단순한 검정 창을 초기화 할 것이다.
@@ -214,17 +214,20 @@ void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
 	DEVMODE dmScreenSettings;
 	int posX, posY;
 
-
-	// Get an external pointer to this object.	
+	// Get an external pointer to this object.
+	// 외부 포인터 가져오는 객체
 	ApplicationHandle = this;
 
 	// Get the instance of this application.
+	// 어플리케이션의 인스턴스를 가져옴
 	m_hinstance = GetModuleHandle(NULL);
 
 	// Give the application a name.
-	m_applicationName = L"Engine";
+	// 어플리케이션 이름
+	m_applicationName = L"PROJECT_DXF";
 
 	// Setup the windows class with default settings.
+	// WIndow 클래스의 기본 설정
 	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 	wc.lpfnWndProc = WndProc;
 	wc.cbClsExtra = 0;
@@ -239,16 +242,20 @@ void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
 	wc.cbSize = sizeof(WNDCLASSEX);
 
 	// Register the window class.
+	// 윈도우 클래스 등록
 	RegisterClassEx(&wc);
 
 	// Determine the resolution of the clients desktop screen.
+	// 클라이언트 해상도 결정
 	screenWidth = GetSystemMetrics(SM_CXSCREEN);
 	screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
 	// Setup the screen settings depending on whether it is running in full screen or in windowed mode.
+	// 전체 화면 여부 확인(설정에 따라 화면 설정 변경)
 	if (FULL_SCREEN)
 	{
 		// If full screen set the screen to maximum size of the users desktop and 32bit.
+		// 전체 화면 + 32 비트의 최대 크기 설정
 		memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
 		dmScreenSettings.dmSize = sizeof(dmScreenSettings);
 		dmScreenSettings.dmPelsWidth = (unsigned long)screenWidth;
@@ -257,9 +264,11 @@ void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
 		dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
 		// Change the display settings to full screen.
+		// 전체 화면으로 변경
 		ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN);
 
 		// Set the position of the window to the top left corner.
+		// 윈도우 위치 좌측 상단 고정
 		posX = posY = 0;
 	}
 	else
@@ -269,21 +278,25 @@ void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
 		screenHeight = 600;
 
 		// Place the window in the middle of the screen.
+		// 화면 중앙 고정
 		posX = (GetSystemMetrics(SM_CXSCREEN) - screenWidth) / 2;
 		posY = (GetSystemMetrics(SM_CYSCREEN) - screenHeight) / 2;
 	}
 
 	// Create the window with the screen settings and get the handle to it.
+	// 창을 생성 후 가져옴
 	m_hwnd = CreateWindowEx(WS_EX_APPWINDOW, m_applicationName, m_applicationName,
 		WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP,
 		posX, posY, screenWidth, screenHeight, NULL, NULL, m_hinstance, NULL);
 
 	// Bring the window up on the screen and set it as main focus.
+	// 가져온 창을 화면으로 올리고 메ㅣㄴ 포커스를 줌
 	ShowWindow(m_hwnd, SW_SHOW);
 	SetForegroundWindow(m_hwnd);
 	SetFocus(m_hwnd);
 
 	// Hide the mouse cursor.
+	// 마우스 커서 숨기기
 	ShowCursor(false);
 
 	return;
@@ -293,23 +306,28 @@ void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
 void SystemClass::ShutdownWindows()
 {
 	// Show the mouse cursor.
+	// 마우스 커서 보이기
 	ShowCursor(true);
 
 	// Fix the display settings if leaving full screen mode.
+	// 전체 화면 유지할 경우 디스플레이 설정 수정
 	if (FULL_SCREEN)
 	{
 		ChangeDisplaySettings(NULL, 0);
 	}
 
 	// Remove the window.
+	// 화면 제거
 	DestroyWindow(m_hwnd);
 	m_hwnd = NULL;
 
 	// Remove the application instance.
+	// 어플리케이션 인스턴스 제거
 	UnregisterClass(m_applicationName, m_hinstance);
 	m_hinstance = NULL;
 
 	// Release the pointer to this class.
+	// 클래스에 대한 포인터 해제
 	ApplicationHandle = NULL;
 
 	return;
@@ -323,23 +341,26 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 	switch (umessage)
 	{
 		// Check if the window is being destroyed.
-	case WM_DESTROY:
-	{
-		PostQuitMessage(0);
-		return 0;
-	}
+		// 윈도우 제거 확인
+		case WM_DESTROY:
+		{
+			PostQuitMessage(0);
+			return 0;
+		}
 
-	// Check if the window is being closed.
-	case WM_CLOSE:
-	{
-		PostQuitMessage(0);
-		return 0;
-	}
+		// Check if the window is being closed.
+		// 윈도우 닫기 확인
+		case WM_CLOSE:
+		{
+			PostQuitMessage(0);
+			return 0;
+		}
 
-	// All other messages pass to the message handler in the system class.
-	default:
-	{
-		return ApplicationHandle->MessageHandler(hwnd, umessage, wparam, lparam);
-	}
+		// All other messages pass to the message handler in the system class.
+		// 다른 모든 메세지는 시스템 클래스의 메세지 처리기로 전달
+		default:
+		{
+			return ApplicationHandle->MessageHandler(hwnd, umessage, wparam, lparam);
+		}
 	}
 }
