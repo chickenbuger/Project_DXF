@@ -1,10 +1,25 @@
-#include <iostream>
+#include <Windows.h>
+#include "systemclass.h"
 
-using namespace std;
-
-int main()
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline, int iCmdShow)
 {
-	cout << "Print String";
+	SystemClass* System;
+	bool result;
+
+	// Create the system object.
+	System = new SystemClass;
+
+	// Initialize and run the system object.
+	result = System->Initialize();
+	if (result)
+	{
+		System->Run();
+	}
+
+	// Shutdown and release the system object.
+	System->Shutdown();
+	delete System;
+	System = 0;
 
 	return 0;
 }
