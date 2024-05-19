@@ -1,10 +1,8 @@
 ﻿  D3DClass.cpp
   GraphicsClass.cpp
-  main.cpp
-  SystemClass.cpp
   코드를 생성하고 있습니다.
-  26 of 42 functions (61.9%) were compiled, the rest were copied from previous compilation.
-    15 functions were new in current compilation
+  8 of 42 functions (19.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
   DXF.vcxproj -> C:\Project_DXF\DXF\x64\Release\DXF.exe
